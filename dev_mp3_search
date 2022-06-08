@@ -176,6 +176,9 @@ export function loadMultiselect(dropdown){
                              let array = null;
 						     array = [];
 						     array = res2.items;
+                             let selectAll =  {_id: "2",
+                                title: "SHOW ALL"};
+                            array.unshift(selectAll);
                             
                              console.log("Options Found: " + dropdown + ": ", array)
 
@@ -215,6 +218,9 @@ export function loadMultiselect(dropdown){
 						     array = [];
 						     array = res2.items
                              console.log("Options Found" + dropdown + ": ", array)
+                             let selectAll =  {_id: "2",
+                                title: "SHOW ALL"};
+                            array.unshift(selectAll);
 
                         loadRepeater(dropdown, array);
 
@@ -245,9 +251,11 @@ export function loadRepeater(dropdown, array){
 	//----MUSIC GENRE---//
 
 	if(dropdown === "MP3Database"){ //VARIABLE//
+    /*
            let selectAll =  {_id: "2",
             title: "SHOW ALL"};
         array.unshift(selectAll);
+        */
 		$w("#musicGenre").data = array;  //VARIABLE//
 
 		console.log("Array loaded: ", array)
@@ -275,6 +283,8 @@ export function loadRepeater(dropdown, array){
                                             if(title === "SHOW ALL"){
                                                 $w("#musicGenre").collapse();
                                                 myfilter();
+                                            } else if (title === "None Found"){
+                                                $w("#musicGenre").collapse();
                                             } else {
                                                 loadClicked(dropdown, thisTitle);
                                             }
