@@ -136,6 +136,7 @@ export function searchStr_keyPress(event) {
 		 
      if(event.key === "Enter" || event.key === " " ) {
 		$w("#musicGenre").collapse();
+        myfilter();
 
     }
 
