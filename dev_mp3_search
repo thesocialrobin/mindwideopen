@@ -131,6 +131,8 @@ export function loadMultiselect(dropdown){
 
     let search = $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
+    let categoryValue = $w("#categoryDropdown").valid;
+    console.log("Category Value: ", categoryValue);
 
 
 					wixData.query(dropdown)
@@ -150,7 +152,7 @@ export function loadMultiselect(dropdown){
                              let array = null;
 						     array = [];
 						     array = res2.items[0]
-                             console.log("Options " + dropdown + ": ", array)
+                             console.log("Options Found" + dropdown + ": ", array)
 
                         loadRepeater(dropdown, array);
 
