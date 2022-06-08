@@ -142,13 +142,13 @@ export function loadMultiselect(dropdown){
 
         	wixData.query(dropdown)
 					    .eq("language", "English")
-                        //.contains("title", search)
-                        .hasSome("title", stringArray)
+                        .contains("title", search)
+                        //.hasSome("title", stringArray)
 					.or(
 						wixData.query(dropdown)
 							.eq("language", "English")
-                            //.contains("description", search)
-                            .hasSome("description", stringArray)
+                            .contains("description", search)
+                            //.hasSome("description", stringArray)
 						)
 					.find()
 					.then((res2) => {
@@ -171,14 +171,14 @@ export function loadMultiselect(dropdown){
         wixData.query(dropdown)
 					    .eq("language", "English")
                         .contains("category", category)
-                        //.contains("title", search)
-                        .hasSome("title", stringArray)
+                        .contains("title", search)
+                        //.hasSome("title", stringArray)
 					.or(
 						wixData.query(dropdown)
 							.eq("language", "English")
                             .contains("category", category)
-                            //.contains("description", search)
-                            .hasSome("description", stringArray)
+                            .contains("description", search)
+                            //.hasSome("description", stringArray)
 						)
 					.find()
 					.then((res2) => {
