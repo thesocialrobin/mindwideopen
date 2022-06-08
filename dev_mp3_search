@@ -133,25 +133,61 @@ export function loadMultiselect(dropdown){
     let category = $w('#categoryDropdown').value;
     let categoryValue = $w("#categoryDropdown").valid;
     console.log("Category Value: ", categoryValue);
+    let str   = search;
+    let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
+    console.log("This String:", stringArray);
 
+    if(category === "Any"){ 
+        console.log("Any selected.");
 
-					wixData.query(dropdown)
+        	wixData.query(dropdown)
 					    .eq("language", "English")
-                        .contains("category", category)
-                        .contains("title", search)
+                        //.contains("title", search)
+                        .hasSome("title", stringArray)
 					.or(
 						wixData.query(dropdown)
 							.eq("language", "English")
-                            .contains("category", category)
-                            .contains("description", search)
+                            //.contains("description", search)
+                            .hasSome("description", stringArray)
 						)
 					.find()
 					.then((res2) => {
+                        console.log("Found Items: ", res2, res2.items)
 
 						if (res2.length > 0) {
                              let array = null;
 						     array = [];
-						     array = res2.items[0]
+						     array = res2.items
+                             console.log("Options Found: " + dropdown + ": ", array)
+
+                        loadRepeater(dropdown, array);
+
+						} 
+
+					})
+
+    } else {
+
+        wixData.query(dropdown)
+					    .eq("language", "English")
+                        .contains("category", category)
+                        //.contains("title", search)
+                        .hasSome("title", stringArray)
+					.or(
+						wixData.query(dropdown)
+							.eq("language", "English")
+                            .contains("category", category)
+                            //.contains("description", search)
+                            .hasSome("description", stringArray)
+						)
+					.find()
+					.then((res2) => {
+                        console.log("Found Items: ", res2, res2.items)
+
+						if (res2.length > 0) {
+                             let array = null;
+						     array = [];
+						     array = res2.items
                              console.log("Options Found" + dropdown + ": ", array)
 
                         loadRepeater(dropdown, array);
@@ -159,6 +195,11 @@ export function loadMultiselect(dropdown){
 						} 
 
 					})
+
+    }
+
+
+					
 
 }
 
@@ -209,17 +250,34 @@ export function loadClicked(dropdown, thisTitle){
         let search = $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
 
+    if(category === "Any"){ 
+        console.log("Any selected.");
+        
+        wixData.query(dropdown)
+					    .eq("language", "English")
+                        .contains("title", thisTitle)
+					.find()
+					.then((res2) => {
 
-					wixData.query(dropdown)
+						if (res2.length > 0) {
+                             let array = null;
+						     array = [];
+						     array = res2.items
+                             console.log("Clicked Options " + dropdown + ": ", array)
+
+                        $w("#repeater1").data = array;
+                        $w("#musicGenre").collapse();
+                         $w("#searchStr").value = thisTitle;
+
+						} 
+
+					})
+
+    } else {
+        wixData.query(dropdown)
 					    .eq("language", "English")
                         .contains("category", category)
                         .contains("title", thisTitle)
-					.or(
-						wixData.query(dropdown)
-							.eq("language", "English")
-                            .contains("category", category)
-                            .contains("description", thisTitle)
-						)
 					.find()
 					.then((res2) => {
 
@@ -230,10 +288,17 @@ export function loadClicked(dropdown, thisTitle){
                              console.log("Options " + dropdown + ": ", array)
 
                         $w("#repeater1").data = res2.items;
+                        $w("#musicGenre").collapse();
+                         $w("#searchStr").value = thisTitle;
 
 						} 
 
 					})
+
+    }
+
+
+					
 }
 
 
