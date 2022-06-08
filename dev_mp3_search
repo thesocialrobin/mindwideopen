@@ -102,12 +102,26 @@ export function similar_click(event) {
 }
 
 
+let searchDelay;
 
 export function searchStr_keyPress(event) {
     if(event.key === "Enter"  ) {
       myfilter()
     }
-   loadMultiselect("MP3Database");
+    if(searchDelay){
+        clearTimeout(searchDelay);
+        searchDelay = undefined;
+    }
+
+    searchDelay = setTimeout(()=>{
+     console.log("Value: ", $w("#searchStr").value)
+     loadMultiselect("MP3Database");
+
+    },200)
+
+
+
+
 }
 
 export function loadMultiselect(dropdown){
@@ -170,30 +184,9 @@ export function loadRepeater(dropdown, array){
 
                                         $item('#musicGenreOptions').onClick(async(event) => {   //VARIABLE//
 
-											//--Find whether this has been added. If not, add. If so, remove---//
+											//--load repeater with searched clicked item---//
 
-											let findMatch = musicGenre.find(item=> item === itemData.title) //VARIABLE//
-											//console.log("Find Match result: ", findMatch)
-
-											    if (findMatch !== undefined){
-												
-												var id = itemData.title;
-												for(var i = 0; i < musicGenre.length; i++) { //VARIABLE//
-													if(musicGenre[i] == id) { //VARIABLE//
-														musicGenre.splice(i, 1); //VARIABLE//
-														console.log("Genre logged. Removed.", musicGenre) //VARIABLE//
-														$item("#boxGenre").style.backgroundColor = "rgba(255,255,255,1)"; //VARIABLE//
-														
-														break;
-													}
-												}
-												
-
-											} else {
-												musicGenre.push(itemData.title) //push an item to the show array //VARIABLE//
-												console.log("Genre not logged. Added", itemData.title, musicGenre) //VARIABLE//
-												$item("#boxGenre").style.backgroundColor = "rgba(79,25,16,0.3)"; //VARIABLE//
-											}
+											loadrepeater();
 
 											
 
