@@ -132,6 +132,13 @@ export function searchStr_keyPress(event) {
 
     },200)
 
+   
+		 
+     if(event.key === "Enter" || event.key === " " ) {
+		$w("#musicGenre").collapse();
+
+    }
+
 
 
 
