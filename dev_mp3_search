@@ -86,6 +86,7 @@ function myfilter() {
 export function search_click(event) {
     myfilter()
     let dropdown = "MP3Database";
+    $w("#musicGenre").collapse();
     //loadClicked(dropdown, thisTitle)
 }
 
@@ -166,12 +167,20 @@ export function loadMultiselect(dropdown){
 						if (res2.length > 0) {
                              let array = null;
 						     array = [];
-						     array = res2.items
+						     array = res2.items;
+                            
                              console.log("Options Found: " + dropdown + ": ", array)
 
                         loadRepeater(dropdown, array);
 
 						} 
+                         else {
+                            let array = null;
+                            array = [];
+                            array = [{_id: "1",
+                            title: "None Found"}];
+                            loadRepeater(dropdown, array);
+                        }
 
 					})
 
@@ -202,6 +211,13 @@ export function loadMultiselect(dropdown){
                         loadRepeater(dropdown, array);
 
 						} 
+                         else {
+                            let array = null;
+                            array = [];
+                            array = [{_id: "1",
+                            title: "None Found"}];
+                            loadRepeater(dropdown, array);
+                        }
 
 					})
 
@@ -221,7 +237,11 @@ export function loadRepeater(dropdown, array){
 	//----MUSIC GENRE---//
 
 	if(dropdown === "MP3Database"){ //VARIABLE//
+           let selectAll =  {_id: "2",
+            title: "SHOW ALL"};
+        array.unshift(selectAll);
 		$w("#musicGenre").data = array;  //VARIABLE//
+
 		console.log("Array loaded: ", array)
         $w("#musicGenre").expand();
         session.setItem("Search",""); // resets the session search
@@ -244,9 +264,13 @@ export function loadRepeater(dropdown, array){
 
 											//--load repeater with searched clicked item---//
 
-											loadClicked(dropdown, thisTitle);
+                                            if(title === "SHOW ALL"){
+                                                $w("#musicGenre").collapse();
+                                            } else {
+                                                loadClicked(dropdown, thisTitle);
+                                            }
+                                           
 
-											
 
                                         })
 
@@ -279,7 +303,13 @@ export function loadClicked(dropdown, thisTitle){
                         $w("#musicGenre").collapse();
                          $w("#searchStr").value = thisTitle;
 
-						} 
+						} else {
+                            let array = null;
+                            array = [];
+                            array = [{_id: "1",
+                            title: "None Found"}];
+                            loadRepeater(dropdown, array);
+                        }
 
 					})
 
@@ -301,7 +331,13 @@ export function loadClicked(dropdown, thisTitle){
                         $w("#musicGenre").collapse();
                          $w("#searchStr").value = thisTitle;
 
-						} 
+						} else {
+                            let array = null;
+                            array = [];
+                            array = [{_id: "1",
+                            title: "None Found"}];
+                            loadRepeater(dropdown, array);
+                        }
 
 					})
 
