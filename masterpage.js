@@ -32,7 +32,7 @@ $w.onReady(async function () {
 			 console.log("Dev: ", url);
 		 }
 		 
-        if(event.key === "Enter" || event.key === " " ) {
+        if(event.key === "Enter") {
         wixLocation.to("/mp3s-in-english-dev/");
 		let search = $w("#globalSearch").value;
 		session.setItem("Search", search)
