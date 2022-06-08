@@ -105,9 +105,12 @@ export function similar_click(event) {
 let searchDelay;
 
 export function searchStr_keyPress(event) {
+    /*
     if(event.key === "Enter"  ) {
       myfilter()
     }
+    */
+
     if(searchDelay){
         clearTimeout(searchDelay);
         searchDelay = undefined;
@@ -165,9 +168,10 @@ export function loadRepeater(dropdown, array){
 
 	//----MUSIC GENRE---//
 
-	if(dropdown === "musicGenre"){ //VARIABLE//
+	if(dropdown === "MP3Database"){ //VARIABLE//
 		$w("#musicGenre").data = array;  //VARIABLE//
 		console.log("Array loaded: ", array)
+        $w("#musicGenre").expand();
 
 
 
@@ -179,6 +183,7 @@ export function loadRepeater(dropdown, array){
                                         let title = itemData.title;
                                         //let download = itemData.downloadable;
                                         $item("#musicGenreOptions").text = title;  //VARIABLE//
+                                        let thisTitle = $item("#musicGenreOptions").text;
 
 
 
@@ -186,7 +191,7 @@ export function loadRepeater(dropdown, array){
 
 											//--load repeater with searched clicked item---//
 
-											loadrepeater();
+											loadClicked(dropdown, thisTitle);
 
 											
 
@@ -196,6 +201,39 @@ export function loadRepeater(dropdown, array){
 	}
 
 }
+
+export function loadClicked(dropdown, thisTitle){
+
+        let search = $w('#searchStr').value;
+    let category = $w('#categoryDropdown').value;
+
+
+					wixData.query(dropdown)
+					    .eq("language", "English")
+                        .contains("category", category)
+                        .contains("title", thisTitle)
+					.or(
+						wixData.query(dropdown)
+							.eq("language", "English")
+                            .contains("category", category)
+                            .contains("description", thisTitle)
+						)
+					.find()
+					.then((res2) => {
+
+						if (res2.length > 0) {
+                             let array = null;
+						     array = [];
+						     array = res2.items[0]
+                             console.log("Options " + dropdown + ": ", array)
+
+                        $w("#repeater1").data = res2.items;
+
+						} 
+
+					})
+}
+
 
 export function repeater1_itemReady($item) {
     
