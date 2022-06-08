@@ -7,6 +7,29 @@ let musicGenre = null;
 musicGenre = [];
 
 $w.onReady( () => {
+
+    //--Test--//
+
+    let searchTest = "" + $w('#searchStr').value;
+    let category = $w('#categoryDropdown').value;
+
+    wixData.query("MP3Database")
+					.eq("language", "English")
+                    .hasSome("title", ["sleep", "meditation", "heal"])
+					.or(
+						wixData.query("MP3Database")
+							.eq("language", "English")
+                            .contains("description", searchTest)
+                            .hasSome("description", ["sleep", "meditation", "heal"])
+						)
+					.find()
+					.then((res2) => {
+                        console.log("Found Test Items: ", res2, res2.items)
+                    })
+
+    //--Test--//
+
+
     let masterSearch = session.getItem("Search");
     if (masterSearch !== undefined && masterSearch !== ""){
         $w('#searchStr').value = masterSearch;
@@ -117,13 +140,26 @@ export function similar_click(event) {
 let searchDelay;
 
 export function searchStr_keyPress(event) {
-    /*
-    if(event.key === "Enter"  ) {
-      myfilter()
-    }
-    */
+    
+		 
+     if(event.key === "Enter" || event.key === " " ) {
 
-    if(searchDelay){
+		$w("#musicGenre").collapse();
+               if(searchDelay){
+        clearTimeout(searchDelay);
+        searchDelay = undefined;
+    }
+
+    searchDelay = setTimeout(()=>{
+     console.log("Value: ", $w("#searchStr").value)
+        myfilter();
+
+    },200)
+
+
+    } else {
+
+            if(searchDelay){
         clearTimeout(searchDelay);
         searchDelay = undefined;
     }
@@ -134,11 +170,6 @@ export function searchStr_keyPress(event) {
 
     },200)
 
-   
-		 
-     if(event.key === "Enter" || event.key === " " ) {
-		$w("#musicGenre").collapse();
-        myfilter();
 
     }
 
