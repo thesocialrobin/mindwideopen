@@ -8,9 +8,10 @@ musicGenre = [];
 
 $w.onReady( () => {
     let masterSearch = session.getItem("Search");
-    if (masterSearch !== undefined || masterSearch !== ""){
+    if (masterSearch !== undefined && masterSearch !== ""){
         $w('#searchStr').value = masterSearch;
         loadMultiselect("MP3Database");
+        console.log("Master Search: ", masterSearch)
         //setTimeout(() => wixLocation.to(wixLocation.url), 300)//TIME IN MILLISECONDS
     }
     let search = wixLocation.query.search;
@@ -44,6 +45,7 @@ $w.onReady( () => {
 function myfilter() {
     let search = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
+    session.setItem("Search",""); // resets the session search
 
     //let searchWords = search.split(' ');  
 
@@ -245,10 +247,7 @@ export function loadMultiselect(dropdown){
 export function loadRepeater(dropdown, array){
 
 
-	//----MY PARTNER'S ABILITIES---//
-
-
-	//----MUSIC GENRE---//
+    session.setItem("Search",""); // resets the session search
 
 	if(dropdown === "MP3Database"){ //VARIABLE//
     /*
