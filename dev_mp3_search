@@ -368,3 +368,8 @@ export function repeater1_itemReady($item) {
     }
     } );
 }
+
+
+export function page1_click(event) {
+$w("#musicGenre").collapse();
+}
