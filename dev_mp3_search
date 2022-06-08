@@ -273,6 +273,7 @@ export function loadRepeater(dropdown, array){
 
                                             if(title === "SHOW ALL"){
                                                 $w("#musicGenre").collapse();
+                                                myfilter();
                                             } else {
                                                 loadClicked(dropdown, thisTitle);
                                             }
