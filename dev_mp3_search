@@ -1,11 +1,18 @@
 import wixData from 'wix-data';
 import wixLocation from 'wix-location';
 import wixWindow from 'wix-window';
+import {session} from 'wix-storage';
 
 let musicGenre = null;
 musicGenre = [];
 
 $w.onReady( () => {
+    let masterSearch = session.getItem("Search");
+    if (masterSearch !== undefined || masterSearch !== ""){
+        $w('#searchStr').value = masterSearch;
+        loadMultiselect("MP3Database");
+        //setTimeout(() => wixLocation.to(wixLocation.url), 300)//TIME IN MILLISECONDS
+    }
     let search = wixLocation.query.search;
     console.log(search)
     //let searchWords = search.split(' ');  
@@ -41,7 +48,7 @@ function myfilter() {
     //let searchWords = search.split(' ');  
 
     if(category === "Any"){ 
-
+        $w("#musicGenre").collapse();
         //for (let i=0; i < searchWords.length; i++) 
         //{
             $w("#dataset1").setFilter( wixData.filter()
@@ -57,7 +64,7 @@ function myfilter() {
         //}
     }
     else {
-
+        $w("#musicGenre").collapse();
         //for (let i=0; i < searchWords.length; i++) 
         //{
             $w("#dataset1").setFilter( wixData.filter()
@@ -78,6 +85,8 @@ function myfilter() {
 
 export function search_click(event) {
     myfilter()
+    let dropdown = "MP3Database";
+    //loadClicked(dropdown, thisTitle)
 }
 
 export function categoryDropdown_change(event) {
@@ -215,6 +224,7 @@ export function loadRepeater(dropdown, array){
 		$w("#musicGenre").data = array;  //VARIABLE//
 		console.log("Array loaded: ", array)
         $w("#musicGenre").expand();
+        session.setItem("Search",""); // resets the session search
 
 
 
