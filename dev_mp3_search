@@ -1,0 +1,219 @@
+import wixData from 'wix-data';
+import wixLocation from 'wix-location';
+import wixWindow from 'wix-window';
+
+let musicGenre = null;
+musicGenre = [];
+
+$w.onReady( () => {
+    let search = wixLocation.query.search;
+    console.log(search)
+    //let searchWords = search.split(' ');  
+    
+    if(search == undefined || search === "") {
+        $w('#repeater1').show();
+    }
+    else{
+        $w('#searchStr').value = "" + search;
+
+        //for (let i=0; i < searchWords.length; i++) 
+        //{
+            $w("#dataset1").setFilter( wixData.filter()
+             .eq("language", "English")
+             .contains("title", search)
+             .or(
+                   wixData.filter()
+                   .eq("language", "English")
+                   .contains("description", search)
+                )
+            )
+            .then( () => {
+              $w('#repeater1').show();
+            })
+        //}
+    }
+});
+
+function myfilter() {
+    let search = "" + $w('#searchStr').value;
+    let category = $w('#categoryDropdown').value;
+
+    //let searchWords = search.split(' ');  
+
+    if(category === "Any"){ 
+
+        //for (let i=0; i < searchWords.length; i++) 
+        //{
+            $w("#dataset1").setFilter( wixData.filter()
+            .eq("language", "English")
+            .contains("title", search)
+                .or(
+                    wixData.filter()
+                   .eq("language", "English")
+                   .contains("description", search)
+                )
+            )
+            console.log("Any Cat")
+        //}
+    }
+    else {
+
+        //for (let i=0; i < searchWords.length; i++) 
+        //{
+            $w("#dataset1").setFilter( wixData.filter()
+            .eq("language", "English")
+            .contains("category", category)
+            .contains("title", search)
+                .or(
+                    wixData.filter()
+                   .eq("language", "English")
+                   .contains("category", category)
+                   .contains("description", search)
+                )
+            )
+            console.log(category)
+        //}
+    }
+}
+
+export function search_click(event) {
+    myfilter()
+}
+
+export function categoryDropdown_change(event) {
+    myfilter()
+}
+
+export function categoryDropdown_click(event) {
+    myfilter()
+}
+
+export function similar_click(event) { 
+    let $item = $w.at(event.context);
+    let data = $item("#dataset1").getCurrentItem();
+    console.log(data)
+    let category = data.category[0];
+
+    $w("#dataset1").setFilter( wixData.filter()
+     .eq("language", "English")
+     .contains("category", category)
+    )
+    $w("#repeater1").scrollTo();
+}
+
+
+
+export function searchStr_keyPress(event) {
+    if(event.key === "Enter"  ) {
+      myfilter()
+    }
+   loadMultiselect("MP3Database");
+}
+
+export function loadMultiselect(dropdown){
+
+    let search = $w('#searchStr').value;
+    let category = $w('#categoryDropdown').value;
+
+
+					wixData.query(dropdown)
+					    .eq("language", "English")
+                        .contains("category", category)
+                        .contains("title", search)
+					.or(
+						wixData.query(dropdown)
+							.eq("language", "English")
+                            .contains("category", category)
+                            .contains("description", search)
+						)
+					.find()
+					.then((res2) => {
+
+						if (res2.length > 0) {
+                             let array = null;
+						     array = [];
+						     array = res2.items[0]
+                             console.log("Options " + dropdown + ": ", array)
+
+                        loadRepeater(dropdown, array);
+
+						} 
+
+					})
+
+}
+
+export function loadRepeater(dropdown, array){
+
+
+	//----MY PARTNER'S ABILITIES---//
+
+
+	//----MUSIC GENRE---//
+
+	if(dropdown === "musicGenre"){ //VARIABLE//
+		$w("#musicGenre").data = array;  //VARIABLE//
+		console.log("Array loaded: ", array)
+
+
+
+		$w("#musicGenre").onItemReady(($item, itemData) => {  //VARIABLE//
+
+
+                                        let fileUrl = itemData.url;
+                                        //let type = itemData.type;
+                                        let title = itemData.title;
+                                        //let download = itemData.downloadable;
+                                        $item("#musicGenreOptions").text = title;  //VARIABLE//
+
+
+
+                                        $item('#musicGenreOptions').onClick(async(event) => {   //VARIABLE//
+
+											//--Find whether this has been added. If not, add. If so, remove---//
+
+											let findMatch = musicGenre.find(item=> item === itemData.title) //VARIABLE//
+											//console.log("Find Match result: ", findMatch)
+
+											    if (findMatch !== undefined){
+												
+												var id = itemData.title;
+												for(var i = 0; i < musicGenre.length; i++) { //VARIABLE//
+													if(musicGenre[i] == id) { //VARIABLE//
+														musicGenre.splice(i, 1); //VARIABLE//
+														console.log("Genre logged. Removed.", musicGenre) //VARIABLE//
+														$item("#boxGenre").style.backgroundColor = "rgba(255,255,255,1)"; //VARIABLE//
+														
+														break;
+													}
+												}
+												
+
+											} else {
+												musicGenre.push(itemData.title) //push an item to the show array //VARIABLE//
+												console.log("Genre not logged. Added", itemData.title, musicGenre) //VARIABLE//
+												$item("#boxGenre").style.backgroundColor = "rgba(79,25,16,0.3)"; //VARIABLE//
+											}
+
+											
+
+                                        })
+
+		})
+	}
+
+}
+
+export function repeater1_itemReady($item) {
+    
+    $w("#repeater1").forEachItem( ($item, itemData, index) => {
+    
+    let bestseller = itemData.bestseller;
+    if(bestseller == true) {
+        $item("#bestSeller").show();
+    }
+    else {
+        $item("#bestSeller").hide();
+    }
+    } );
+}
