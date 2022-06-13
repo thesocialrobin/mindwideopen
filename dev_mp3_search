@@ -8,6 +8,8 @@ musicGenre = [];
 
 $w.onReady( () => {
 
+    /*
+
     //--Test--//
 
     let searchTest = "" + $w('#searchStr').value;
@@ -15,20 +17,15 @@ $w.onReady( () => {
 
     wixData.query("MP3Database")
 					.eq("language", "English")
-                    .hasSome("title", ["sleep", "meditation", "heal"])
-					.or(
-						wixData.query("MP3Database")
-							.eq("language", "English")
-                            .contains("description", searchTest)
-                            .hasSome("description", ["sleep", "meditation", "heal"])
-						)
+                    .hasAll("keyword", ["sleep", "Meditation", "Bad"])
 					.find()
 					.then((res2) => {
                         console.log("Found Test Items: ", res2, res2.items)
                     })
 
     //--Test--//
-
+*/
+    let expand = session.getItem("Expand");
 
     let masterSearch = session.getItem("Search");
     if (masterSearch !== undefined && masterSearch !== ""){
@@ -66,9 +63,12 @@ $w.onReady( () => {
 });
 
 function myfilter() {
-    let search = "" + $w('#searchStr').value;
+    //let search = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
     session.setItem("Search",""); // resets the session search
+    let search = $w('#searchStr').value;
+    let str   = search;
+    let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
 
     //let searchWords = search.split(' ');  
 
@@ -78,11 +78,13 @@ function myfilter() {
         //{
             $w("#dataset1").setFilter( wixData.filter()
             .eq("language", "English")
-            .contains("title", search)
+            //.contains("title", search)
+            .hasAll("keyword", stringArray)
                 .or(
                     wixData.filter()
                    .eq("language", "English")
-                   .contains("description", search)
+                   //.contains("description", search)
+                   .hasAll("keyword", stringArray)
                 )
             )
             console.log("Any Cat")
@@ -95,17 +97,23 @@ function myfilter() {
             $w("#dataset1").setFilter( wixData.filter()
             .eq("language", "English")
             .contains("category", category)
-            .contains("title", search)
+            //.contains("title", search)
+            .hasAll("keyword", stringArray)
                 .or(
                     wixData.filter()
                    .eq("language", "English")
                    .contains("category", category)
-                   .contains("description", search)
+                   .hasAll("keyword", stringArray)
+                   //.contains("description", search)
                 )
             )
             console.log(category)
         //}
     }
+}
+
+function myfilterClosed() {
+    
 }
 
 export function search_click(event) {
@@ -142,7 +150,7 @@ let searchDelay;
 export function searchStr_keyPress(event) {
     
 		 
-     if(event.key === "Enter" || event.key === " " ) {
+     if(event.key === "Enter") {
 
 		$w("#musicGenre").collapse();
                if(searchDelay){
@@ -193,14 +201,8 @@ export function loadMultiselect(dropdown){
 
         	wixData.query(dropdown)
 					    .eq("language", "English")
-                        .contains("title", search)
-                        //.hasSome("title", stringArray)
-					.or(
-						wixData.query(dropdown)
-							.eq("language", "English")
-                            .contains("description", search)
-                            //.hasSome("description", stringArray)
-						)
+                        //.contains("title", search)
+                        .hasAll("keyword", stringArray)
 					.find()
 					.then((res2) => {
                         console.log("Found Items: ", res2, res2.items)
@@ -233,15 +235,8 @@ export function loadMultiselect(dropdown){
         wixData.query(dropdown)
 					    .eq("language", "English")
                         .contains("category", category)
-                        .contains("title", search)
-                        //.hasSome("title", stringArray)
-					.or(
-						wixData.query(dropdown)
-							.eq("language", "English")
-                            .contains("category", category)
-                            .contains("description", search)
-                            //.hasSome("description", stringArray)
-						)
+                        //.contains("title", search)
+                        .hasAll("keyword", stringArray)
 					.find()
 					.then((res2) => {
                         console.log("Found Items: ", res2, res2.items)
@@ -277,7 +272,7 @@ export function loadMultiselect(dropdown){
 
 export function loadRepeater(dropdown, array){
 
-
+    let expand = session.getItem("Expand");
     session.setItem("Search",""); // resets the session search
 
 	if(dropdown === "MP3Database"){ //VARIABLE//
@@ -287,9 +282,16 @@ export function loadRepeater(dropdown, array){
         array.unshift(selectAll);
         */
 		$w("#musicGenre").data = array;  //VARIABLE//
+        myfilter(); //added 061322
 
 		console.log("Array loaded: ", array)
-        $w("#musicGenre").expand();
+        if(expand === "Master"){
+            $w("#musicGenre").collapse();
+            session.setItem("Expand", ""); 
+        } else {
+            $w("#musicGenre").expand();
+        }
+        
         session.setItem("Search",""); // resets the session search
 
 
