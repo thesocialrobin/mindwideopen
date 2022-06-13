@@ -1,405 +1,60 @@
+// For full API documentation, including code examples, visit https://wix.to/94BuAAs
+import wixUsers from 'wix-users';
 import wixData from 'wix-data';
 import wixLocation from 'wix-location';
-import wixWindow from 'wix-window';
 import {session} from 'wix-storage';
 
-let musicGenre = null;
-musicGenre = [];
+import {local} from 'wix-storage';
 
-$w.onReady( () => {
+$w.onReady(async function () {
+	HideElements();
+	//TODO: write your page related code here...
+	if(wixUsers.currentUser.loggedIn){
+		let user=(await wixData.query("users").eq("userId", wixUsers.currentUser.id).find()).items;
+		//console.log(user)
+		
+		if(user.length>0){
+			if(user[0].cancelled===true){
+				wixUsers.logout();
+			}
+		}
 
-    //--Test--//
+	}
+	$w("#globalSearchBtn").onClick(() => {
+		let search = $w("#globalSearch").value;
+		session.setItem("Search", search)
+		session.setItem("Expand", "Master");
+		wixLocation.to("/mp3s-in-english-dev/");
+		
+	})
+	 $w('#globalSearch').onKeyPress((event) => {
+		 let url = wixLocation.url;
 
-    let searchTest = "" + $w('#searchStr').value;
-    let category = $w('#categoryDropdown').value;
+		 if (wixLocation.path[0] == "dev") {
+			 console.log("Dev: ", url);
+		 }
+		 
+        if(event.key === "Enter") {
+        
+		let search = $w("#globalSearch").value;
+		session.setItem("Search", search)
+		session.setItem("Expand", "Master");
+		wixLocation.to("/mp3s-in-english-dev/");
+		
+        }
+		
+    })
 
-    wixData.query("MP3Database")
-					.eq("language", "English")
-                    .hasAll("keyword", ["sleep", "Meditation", "Bad"])
-					.find()
-					.then((res2) => {
-                        console.log("Found Test Items: ", res2, res2.items)
-                    })
 
-    //--Test--//
-
-
-    let masterSearch = session.getItem("Search");
-    if (masterSearch !== undefined && masterSearch !== ""){
-        $w('#searchStr').value = masterSearch;
-        loadMultiselect("MP3Database");
-        console.log("Master Search: ", masterSearch)
-        //setTimeout(() => wixLocation.to(wixLocation.url), 300)//TIME IN MILLISECONDS
-    }
-    let search = wixLocation.query.search;
-    console.log(search)
-    //let searchWords = search.split(' ');  
-    
-    if(search == undefined || search === "") {
-        $w('#repeater1').show();
-    }
-    else{
-        $w('#searchStr').value = "" + search;
-
-        //for (let i=0; i < searchWords.length; i++) 
-        //{
-            $w("#dataset1").setFilter( wixData.filter()
-             .eq("language", "English")
-             .contains("title", search)
-             .or(
-                   wixData.filter()
-                   .eq("language", "English")
-                   .contains("description", search)
-                )
-            )
-            .then( () => {
-              $w('#repeater1').show();
-            })
-        //}
-    }
 });
 
-function myfilter() {
-    //let search = "" + $w('#searchStr').value;
-    let category = $w('#categoryDropdown').value;
-    session.setItem("Search",""); // resets the session search
-    let search = $w('#searchStr').value;
-    let str   = search;
-    let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
+function HideElements () {
+ let url = wixLocation.url;
+ if (url === "https://www.unlockyourlifetoday.com/mp3s-in-english-dev/")
+    {
+        $w('#group38').hide();
+        } else {
+        $w('#group38').show();
+        }
+        }
 
-    //let searchWords = search.split(' ');  
-
-    if(category === "Any"){ 
-        $w("#musicGenre").collapse();
-        //for (let i=0; i < searchWords.length; i++) 
-        //{
-            $w("#dataset1").setFilter( wixData.filter()
-            .eq("language", "English")
-            //.contains("title", search)
-            .hasAll("keyword", stringArray)
-                .or(
-                    wixData.filter()
-                   .eq("language", "English")
-                   //.contains("description", search)
-                   .hasAll("keyword", stringArray)
-                )
-            )
-            console.log("Any Cat")
-        //}
-    }
-    else {
-        $w("#musicGenre").collapse();
-        //for (let i=0; i < searchWords.length; i++) 
-        //{
-            $w("#dataset1").setFilter( wixData.filter()
-            .eq("language", "English")
-            .contains("category", category)
-            //.contains("title", search)
-            .hasAll("keyword", stringArray)
-                .or(
-                    wixData.filter()
-                   .eq("language", "English")
-                   .contains("category", category)
-                   .hasAll("keyword", stringArray)
-                   //.contains("description", search)
-                )
-            )
-            console.log(category)
-        //}
-    }
-}
-
-export function search_click(event) {
-    myfilter()
-    let dropdown = "MP3Database";
-    $w("#musicGenre").collapse();
-    //loadClicked(dropdown, thisTitle)
-}
-
-export function categoryDropdown_change(event) {
-    myfilter()
-}
-
-export function categoryDropdown_click(event) {
-    myfilter()
-}
-
-export function similar_click(event) { 
-    let $item = $w.at(event.context);
-    let data = $item("#dataset1").getCurrentItem();
-    console.log(data)
-    let category = data.category[0];
-
-    $w("#dataset1").setFilter( wixData.filter()
-     .eq("language", "English")
-     .contains("category", category)
-    )
-    $w("#repeater1").scrollTo();
-}
-
-
-let searchDelay;
-
-export function searchStr_keyPress(event) {
-    
-		 
-     if(event.key === "Enter" || event.key === " " ) {
-
-		$w("#musicGenre").collapse();
-               if(searchDelay){
-        clearTimeout(searchDelay);
-        searchDelay = undefined;
-    }
-
-    searchDelay = setTimeout(()=>{
-     console.log("Value: ", $w("#searchStr").value)
-        myfilter();
-
-    },200)
-
-
-    } else {
-
-            if(searchDelay){
-        clearTimeout(searchDelay);
-        searchDelay = undefined;
-    }
-
-    searchDelay = setTimeout(()=>{
-     console.log("Value: ", $w("#searchStr").value)
-     loadMultiselect("MP3Database");
-
-    },200)
-
-
-    }
-
-
-
-
-}
-
-export function loadMultiselect(dropdown){
-
-    let search = $w('#searchStr').value;
-    let category = $w('#categoryDropdown').value;
-    let categoryValue = $w("#categoryDropdown").valid;
-    console.log("Category Value: ", categoryValue);
-    let str   = search;
-    let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
-    console.log("This String:", stringArray);
-
-    if(category === "Any"){ 
-        console.log("Any selected.");
-
-        	wixData.query(dropdown)
-					    .eq("language", "English")
-                        //.contains("title", search)
-                        .hasAll("keyword", stringArray)
-					.find()
-					.then((res2) => {
-                        console.log("Found Items: ", res2, res2.items)
-
-						if (res2.length > 0) {
-                             let array = null;
-						     array = [];
-						     array = res2.items;
-                             let selectAll =  {_id: "2",
-                                title: "SHOW ALL"};
-                            array.unshift(selectAll);
-                            
-                             console.log("Options Found: " + dropdown + ": ", array)
-
-                        loadRepeater(dropdown, array);
-
-						} 
-                         else {
-                            let array = null;
-                            array = [];
-                            array = [{_id: "1",
-                            title: "None Found"}];
-                            loadRepeater(dropdown, array);
-                        }
-
-					})
-
-    } else {
-
-        wixData.query(dropdown)
-					    .eq("language", "English")
-                        .contains("category", category)
-                        //.contains("title", search)
-                        .hasAll("keyword", stringArray)
-					.find()
-					.then((res2) => {
-                        console.log("Found Items: ", res2, res2.items)
-
-						if (res2.length > 0) {
-                             let array = null;
-						     array = [];
-						     array = res2.items
-                             console.log("Options Found" + dropdown + ": ", array)
-                             let selectAll =  {_id: "2",
-                                title: "SHOW ALL"};
-                            array.unshift(selectAll);
-
-                        loadRepeater(dropdown, array);
-
-						} 
-                         else {
-                            let array = null;
-                            array = [];
-                            array = [{_id: "1",
-                            title: "None Found"}];
-                            loadRepeater(dropdown, array);
-                        }
-
-					})
-
-    }
-
-
-					
-
-}
-
-export function loadRepeater(dropdown, array){
-
-
-    session.setItem("Search",""); // resets the session search
-
-	if(dropdown === "MP3Database"){ //VARIABLE//
-    /*
-           let selectAll =  {_id: "2",
-            title: "SHOW ALL"};
-        array.unshift(selectAll);
-        */
-		$w("#musicGenre").data = array;  //VARIABLE//
-
-		console.log("Array loaded: ", array)
-        $w("#musicGenre").expand();
-        session.setItem("Search",""); // resets the session search
-
-
-
-		$w("#musicGenre").onItemReady(($item, itemData) => {  //VARIABLE//
-
-
-                                        let fileUrl = itemData.url;
-                                        //let type = itemData.type;
-                                        let title = itemData.title;
-                                        //let download = itemData.downloadable;
-                                        $item("#musicGenreOptions").text = title;  //VARIABLE//
-                                        let thisTitle = $item("#musicGenreOptions").text;
-
-
-
-                                        $item('#musicGenreOptions').onClick(async(event) => {   //VARIABLE//
-
-											//--load repeater with searched clicked item---//
-
-                                            if(title === "SHOW ALL"){
-                                                $w("#musicGenre").collapse();
-                                                myfilter();
-                                            } else if (title === "None Found"){
-                                                $w("#musicGenre").collapse();
-                                            } else {
-                                                loadClicked(dropdown, thisTitle);
-                                            }
-                                           
-
-
-                                        })
-
-		})
-	}
-
-}
-
-export function loadClicked(dropdown, thisTitle){
-
-        let search = $w('#searchStr').value;
-    let category = $w('#categoryDropdown').value;
-
-    if(category === "Any"){ 
-        console.log("Any selected.");
-        
-        wixData.query(dropdown)
-					    .eq("language", "English")
-                        .contains("title", thisTitle)
-					.find()
-					.then((res2) => {
-
-						if (res2.length > 0) {
-                             let array = null;
-						     array = [];
-						     array = res2.items
-                             console.log("Clicked Options " + dropdown + ": ", array)
-
-                        $w("#repeater1").data = array;
-                        $w("#musicGenre").collapse();
-                         $w("#searchStr").value = thisTitle;
-
-						} else {
-                            let array = null;
-                            array = [];
-                            array = [{_id: "1",
-                            title: "None Found"}];
-                            loadRepeater(dropdown, array);
-                        }
-
-					})
-
-    } else {
-        wixData.query(dropdown)
-					    .eq("language", "English")
-                        .contains("category", category)
-                        .contains("title", thisTitle)
-					.find()
-					.then((res2) => {
-
-						if (res2.length > 0) {
-                             let array = null;
-						     array = [];
-						     array = res2.items[0]
-                             console.log("Options " + dropdown + ": ", array)
-
-                        $w("#repeater1").data = res2.items;
-                        $w("#musicGenre").collapse();
-                         $w("#searchStr").value = thisTitle;
-
-						} else {
-                            let array = null;
-                            array = [];
-                            array = [{_id: "1",
-                            title: "None Found"}];
-                            loadRepeater(dropdown, array);
-                        }
-
-					})
-
-    }
-
-
-					
-}
-
-
-export function repeater1_itemReady($item) {
-    
-    $w("#repeater1").forEachItem( ($item, itemData, index) => {
-    
-    let bestseller = itemData.bestseller;
-    if(bestseller == true) {
-        $item("#bestSeller").show();
-    }
-    else {
-        $item("#bestSeller").hide();
-    }
-    } );
-}
-
-
-export function page1_click(event) {
-$w("#musicGenre").collapse();
-}
