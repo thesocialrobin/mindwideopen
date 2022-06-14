@@ -165,6 +165,18 @@ export function searchStr_keyPress(event) {
     },200)
 
 
+    } else if (event.key === "Backspace"){
+
+        $w("#musicGenre").collapse();
+
+    } else if ($w("#searchStr").value.length < 1){
+
+        $w("#musicGenre").collapse();
+
+    } else if (event.key === "Delete"){
+
+        $w("#musicGenre").collapse();
+
     } else {
 
             if(searchDelay){
@@ -282,7 +294,7 @@ export function loadRepeater(dropdown, array){
         array.unshift(selectAll);
         */
 		$w("#musicGenre").data = array;  //VARIABLE//
-        myfilter(); //added 061322
+        myfilter();
 
 		console.log("Array loaded: ", array)
         if(expand === "Master"){
