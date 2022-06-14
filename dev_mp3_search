@@ -28,7 +28,7 @@ $w.onReady( () => {
     let expand = session.getItem("Expand");
 
     let masterSearch = session.getItem("Search");
-    if (masterSearch !== undefined && masterSearch !== ""){
+    if (masterSearch !== undefined && masterSearch !== "" && masterSearch !== null){
         $w('#searchStr').value = masterSearch;
         loadMultiselect("MP3Database");
         console.log("Master Search: ", masterSearch)
@@ -66,6 +66,7 @@ function myfilter() {
     //let search = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
     session.setItem("Search",""); // resets the session search
+    session.setItem("Expand","");
     let search = $w('#searchStr').value;
     let str   = search;
     let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
@@ -286,6 +287,7 @@ export function loadRepeater(dropdown, array){
 
     let expand = session.getItem("Expand");
     session.setItem("Search",""); // resets the session search
+    session.setItem("Expand","");
 
 	if(dropdown === "MP3Database"){ //VARIABLE//
     /*
