@@ -64,7 +64,7 @@ $w.onReady( () => {
     }
 });
 
-function myNewFilter() {
+function myfilter() {
     let searchSpace = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
     session.setItem("Search",""); // resets the session search
@@ -89,6 +89,11 @@ function myNewFilter() {
                    .eq("language", "English")
                    //.contains("description", searchSpace)
                    .hasAll("keyword", stringArray)
+                    .or(
+                        wixData.filter()
+                    .eq("language", "English")
+                    .contains("description", search)
+                    )
                 )
             )
             console.log("Any Cat")
@@ -109,6 +114,12 @@ function myNewFilter() {
                    .contains("category", category)
                    //.hasAll("keyword", stringArray)
                    .contains("description", search)
+                        .or(
+                        wixData.filter()
+                            .eq("language", "English")
+                            .contains("category", category)
+                            .contains("description", search)
+                            )
                 )
             )
             console.log("Else Is:", category)
@@ -116,9 +127,14 @@ function myNewFilter() {
     }
 }
 
-function myfilter() {
+function myOldfilter() {
     let search = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
+
+
+    let searchNew = $w('#searchStr').value;
+    let str   = searchNew;
+    let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
 
     //let searchWords = search.split(' ');  
 
@@ -133,6 +149,12 @@ function myfilter() {
                     wixData.filter()
                    .eq("language", "English")
                    .contains("description", search)
+                        .or(
+                            wixData.filter()
+                        .eq("language", "English")
+                        //.contains("description", searchSpace)
+                        .hasAll("keyword", stringArray)
+                        )
                 )
             )
             console.log("Any Cat")
@@ -151,6 +173,12 @@ function myfilter() {
                    .eq("language", "English")
                    .contains("category", category)
                    .contains("description", search)
+                    .or(
+                             wixData.filter()
+                            .eq("language", "English")
+                            .contains("category", category)
+                            .hasAll("keyword", stringArray)
+                            )
                 )
             )
             console.log(category)
@@ -351,6 +379,11 @@ export function loadRepeater(dropdown, array){
             $w("#musicGenre").expand();
         }
         
+        if(array.length === 1){
+            $w("#musicGenre").collapse();
+            session.setItem("Expand", ""); 
+        }
+
         session.setItem("Search",""); // resets the session search
 
 
