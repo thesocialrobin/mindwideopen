@@ -8,6 +8,8 @@ musicGenre = [];
 
 $w.onReady( () => {
 
+    $w('#categoryDropdown').value = "Any";
+
     /*
 
     //--Test--//
@@ -62,29 +64,30 @@ $w.onReady( () => {
     }
 });
 
-function myfilter() {
-    //let search = "" + $w('#searchStr').value;
+function myNewFilter() {
+    let searchSpace = "" + $w('#searchStr').value;
     let category = $w('#categoryDropdown').value;
     session.setItem("Search",""); // resets the session search
     session.setItem("Expand","");
     let search = $w('#searchStr').value;
     let str   = search;
     let stringArray = str.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; });
+    console.log("CATEGORY Logged:", category )
 
     //let searchWords = search.split(' ');  
 
-    if(category === "Any"){ 
+    if(category === "Any" || category == "" || category == null || category == undefined){ 
         $w("#musicGenre").collapse();
         //for (let i=0; i < searchWords.length; i++) 
         //{
             $w("#dataset1").setFilter( wixData.filter()
             .eq("language", "English")
-            //.contains("title", search)
-            .hasAll("keyword", stringArray)
+            .contains("title", search)
+            //.hasAll("keyword", stringArray)
                 .or(
                     wixData.filter()
                    .eq("language", "English")
-                   //.contains("description", search)
+                   //.contains("description", searchSpace)
                    .hasAll("keyword", stringArray)
                 )
             )
@@ -104,8 +107,50 @@ function myfilter() {
                     wixData.filter()
                    .eq("language", "English")
                    .contains("category", category)
-                   .hasAll("keyword", stringArray)
-                   //.contains("description", search)
+                   //.hasAll("keyword", stringArray)
+                   .contains("description", search)
+                )
+            )
+            console.log("Else Is:", category)
+        //}
+    }
+}
+
+function myfilter() {
+    let search = "" + $w('#searchStr').value;
+    let category = $w('#categoryDropdown').value;
+
+    //let searchWords = search.split(' ');  
+
+    if(category === "Any"){ 
+
+        //for (let i=0; i < searchWords.length; i++) 
+        //{
+            $w("#dataset1").setFilter( wixData.filter()
+            .eq("language", "English")
+            .contains("title", search)
+                .or(
+                    wixData.filter()
+                   .eq("language", "English")
+                   .contains("description", search)
+                )
+            )
+            console.log("Any Cat")
+        //}
+    }
+    else {
+
+        //for (let i=0; i < searchWords.length; i++) 
+        //{
+            $w("#dataset1").setFilter( wixData.filter()
+            .eq("language", "English")
+            .contains("category", category)
+            .contains("title", search)
+                .or(
+                    wixData.filter()
+                   .eq("language", "English")
+                   .contains("category", category)
+                   .contains("description", search)
                 )
             )
             console.log(category)
